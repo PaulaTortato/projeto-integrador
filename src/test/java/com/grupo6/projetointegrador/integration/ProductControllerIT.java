@@ -6,6 +6,7 @@ import com.grupo6.projetointegrador.dto.ProductWarehousesDto;
 import com.grupo6.projetointegrador.factory.InboundOrderFactory;
 import com.grupo6.projetointegrador.factory.WarehouseFactory;
 import com.grupo6.projetointegrador.model.entity.*;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.model.enumeration.Category;
 import com.grupo6.projetointegrador.repository.*;
 import com.grupo6.projetointegrador.response.PageableResponse;
@@ -59,6 +60,9 @@ public class ProductControllerIT {
     @Autowired
     private InboundOrderRepo inboundOrderRepo;
 
+    @Autowired
+    private SellerRepo sellerRepo;
+
     @BeforeAll
     void setup() {
         createProductsAndItemBatches();
@@ -70,6 +74,7 @@ public class ProductControllerIT {
         Long productId = 1L;
         String order = "Q";
 
+        createProductAndSeller(productId, 1L);
         // When
         ResultActions result = mockMvc.perform(get("/api/products/" + productId + "?order=" + order)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -93,6 +98,7 @@ public class ProductControllerIT {
         Long productId = 1L;
         String order = "L";
 
+        createProductAndSeller(productId, 1L);
         // When
         ResultActions result = mockMvc.perform(get("/api/products/" + productId + "?order=" + order)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -116,6 +122,7 @@ public class ProductControllerIT {
         Long productId = 1L;
         String order = "V";
 
+        createProductAndSeller(productId, 1L);
         // When
         ResultActions result = mockMvc.perform(get("/api/products/" + productId + "?order=" + order)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -192,6 +199,8 @@ public class ProductControllerIT {
         String page = "0";
         String category = "FS";
 
+        createProductAndSeller(1L, 1L);
+        createProductAndSeller(2L, 1L);
         // When
         ResultActions result = mockMvc.perform(get("/api/products/category-search" + "?page=" + page + "&category=" + category)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -222,6 +231,7 @@ public class ProductControllerIT {
         // Given
         Long productId = 1L;
 
+        createProductAndSeller(productId, 1L);
         // When
         mockMvc.perform(get("/api/products/warehouse/" + productId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -294,5 +304,23 @@ public class ProductControllerIT {
         inboundOrderRepo.save(inboundOrder);
 
         return itemBatches;
+    }
+
+    private void createProductAndSeller(Long productId, Long sellerId) {
+        Seller seller = sellerRepo.save(new Seller(
+                sellerId,
+                "Fulano",
+                "de Tal",
+                "fulano.dtal@teste.com",
+                "Rua Canopus",
+                123,
+                "86070180",
+                Active.ATIVO,
+                null
+        ));
+        Product product = productRepo.save(new Product(productId, BigDecimal.valueOf(5), Category.FRESCO, seller));
+
+        seller.setProducts(List.of(product));
+        sellerRepo.save(seller);
     }
 }

@@ -4,6 +4,7 @@ import com.grupo6.projetointegrador.dto.*;
 import com.grupo6.projetointegrador.exception.BusinessRuleException;
 import com.grupo6.projetointegrador.exception.NotFoundException;
 import com.grupo6.projetointegrador.model.entity.*;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -178,6 +179,7 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         verifyWarehouseMatchSection(section, warehouse);
         verifyIfProductsCategoryDifferFromSection(products, section);
         verifyIfSectionCanStoreItems(section, volumeToBeStored);
+        verifySeller(products);
     }
 
     /**
@@ -247,5 +249,15 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         if(!warehouse.getWarehouseOperator().getId().equals(warehouseOperator.getId())){
             throw new BusinessRuleException("Este operador não faz parte do armazém.");
         }
+    }
+
+    private void verifySeller(List<Product> products) {
+        products.forEach((batch) -> {
+            Seller seller = productRepo.findSellerByProductId(batch.getId())
+                    .orElseThrow(() -> new NotFoundException("Vendedor não encontrado."));
+            if(seller.getActive() == Active.INATIVO) {
+                throw new BusinessRuleException("Vendedor inativo.");
+            }
+        });
     }
 }

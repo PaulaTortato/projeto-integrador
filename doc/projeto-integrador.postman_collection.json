@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "404ac091-1309-4dca-aa02-bce3e3ac960f",
+		"_postman_id": "cab78805-0347-4ffb-92f0-a2a1fea5527c",
 		"name": "projeto-integrador",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23703257"
 	},
 	"item": [
 		{
@@ -305,6 +306,129 @@
 							"key": "sectionId",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US06 - Insere novo vendedor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Villas Boas\",\n    \"email\": \"carlos.villasboas@email.com\",\n    \"address\": \"Rua Umotina\",\n    \"houseNumber\": 247,\n    \"zipCode\": \"94495408\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/seller",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seller"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US06 - Busca dados do vendedor indicado",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/seller/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seller",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US06 - Atualiza os dados do vendedor indicado",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Artur\",\n    \"lastName\": \"Silva\",\n    \"houseNumber\": 247\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/seller/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seller",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US06 - Inativa o vendedor indicado",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/seller/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seller",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "US06 - Busca lotes de vendedores inativos por armazém",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/seller/warehouse/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seller",
+						"warehouse",
+						"1"
 					]
 				}
 			},

@@ -4,6 +4,7 @@ import com.grupo6.projetointegrador.model.entity.InboundOrder;
 import com.grupo6.projetointegrador.model.entity.ItemBatch;
 import com.grupo6.projetointegrador.model.entity.Product;
 import com.grupo6.projetointegrador.model.entity.Seller;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.model.enumeration.Category;
 
 import java.math.BigDecimal;
@@ -30,7 +31,17 @@ public class ItemBatchFactory {
     }
 
     private static Product genericProduct() {
-        Seller seller = new Seller(1L, null);
+        Seller seller = new Seller(
+                1L,
+                "Fulano",
+                "de Tal",
+                "fulano.dtal@teste.com",
+                "Rua Canopus",
+                123,
+                "86070180",
+                Active.ATIVO,
+                null
+        );
 
         Product product = new Product(1L, BigDecimal.valueOf(5), Category.FRESCO, seller);
 

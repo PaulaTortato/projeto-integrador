@@ -11,6 +11,7 @@ import com.grupo6.projetointegrador.model.entity.Product;
 import com.grupo6.projetointegrador.model.entity.Section;
 import com.grupo6.projetointegrador.model.entity.Seller;
 import com.grupo6.projetointegrador.model.entity.Warehouse;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.model.enumeration.Category;
 import com.grupo6.projetointegrador.repository.*;
 import com.grupo6.projetointegrador.service.InboundOrderService;
@@ -314,7 +315,17 @@ public class InboundOrderControllerIT {
     }
 
     private void createProductAndSeller(Long productId, Long sellerId) {
-        Seller seller = sellerRepo.save(new Seller(sellerId, null));
+        Seller seller = sellerRepo.save(new Seller(
+                sellerId,
+                "Fulano",
+                "de Tal",
+                "fulano.dtal@teste.com",
+                "Rua Canopus",
+                123,
+                "86070180",
+                Active.ATIVO,
+                null
+        ));
         Product product = productRepo.save(new Product(productId, BigDecimal.valueOf(5), Category.FRESCO, seller));
 
         seller.setProducts(List.of(product));
