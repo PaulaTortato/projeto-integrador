@@ -10,19 +10,12 @@ import java.util.List;
 
 @Setter
 public class WarehouseFactory {
-    private static Long id;
-    private static List<Section> sections;
-    private static WarehouseOperator warehouseOperator;
-
     public static Warehouse build() {
         Warehouse warehouse = new Warehouse();
-        if (id == null) id = 1L;
-        if (sections == null || sections.isEmpty()) sections = genericSections(warehouse);
-        if (warehouseOperator == null) warehouseOperator = genericWarehouseOperator();
 
-        warehouse.setId(id);
-        warehouse.setSections(sections);
-        warehouse.setWarehouseOperator(warehouseOperator);
+        warehouse.setId(1L);
+        warehouse.setSections(genericSections(warehouse));
+        warehouse.setWarehouseOperator(genericWarehouseOperator());
         return warehouse;
     }
 

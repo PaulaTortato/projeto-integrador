@@ -6,12 +6,10 @@ import com.grupo6.projetointegrador.dto.OrderPurchaseDto;
 import com.grupo6.projetointegrador.dto.ProductOrderDto;
 import com.grupo6.projetointegrador.dto.TotalPriceDto;
 import com.grupo6.projetointegrador.model.entity.*;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.model.enumeration.Category;
 import com.grupo6.projetointegrador.model.enumeration.StatusOrder;
-import com.grupo6.projetointegrador.repository.BuyerRepo;
-import com.grupo6.projetointegrador.repository.ItemBatchRepo;
-import com.grupo6.projetointegrador.repository.OrderPurchaseRepo;
-import com.grupo6.projetointegrador.repository.ProductRepo;
+import com.grupo6.projetointegrador.repository.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +53,9 @@ public class OrderPurchaseControllerIT {
 
     @Autowired
     private OrderPurchaseRepo orderPurchaseRepo;
+
+    @Autowired
+    private SellerRepo sellerRepo;
 
     @Test
     void findOrderPurchase_getOrderPurchaseDto_whenProvidedOrderPurchaseIdExists() throws Exception {
@@ -122,7 +123,7 @@ public class OrderPurchaseControllerIT {
     @Test
     void createOrderPurchase_createOrderAndReturnTotalPrice_whenProvidedDataIsValid() throws Exception {
         // Given
-        createProductAndItemBatch();
+        createProductAndSellerAndItemBatch();
         createBuyer();
         CreateOrderPurchaseDto createOrderPurchaseDto = new CreateOrderPurchaseDto(
                 1L,
@@ -147,7 +148,7 @@ public class OrderPurchaseControllerIT {
     @Test
     void createOrderPurchase_throwsNotFound_whenBuyerDoesNotExists() throws Exception {
         // Given
-        createProductAndItemBatch();
+        createProductAndSellerAndItemBatch();
         CreateOrderPurchaseDto createOrderPurchaseDto = new CreateOrderPurchaseDto(
                 1L,
                 LocalDate.now(),
@@ -176,7 +177,7 @@ public class OrderPurchaseControllerIT {
     }
 
     private void createOrderPurchase(StatusOrder statusOrder) {
-        ItemBatch itemBatch = createProductAndItemBatch();
+        ItemBatch itemBatch = createProductAndSellerAndItemBatch();
         Buyer buyer = createBuyer();
         OrderPurchase orderPurchase = orderPurchaseRepo.save(
                 new OrderPurchase(null, buyer, LocalDate.now(), null, statusOrder)
@@ -186,8 +187,21 @@ public class OrderPurchaseControllerIT {
         orderPurchaseRepo.save(orderPurchase);
     }
 
-    private ItemBatch createProductAndItemBatch() {
-        Product product = productRepo.save(new Product(1L, BigDecimal.valueOf(10), Category.FRESCO, null));
+    private ItemBatch createProductAndSellerAndItemBatch() {
+        Seller seller = sellerRepo.save(new Seller(
+                1L,
+                "Fulano",
+                "de Tal",
+                "fulano.dtal@teste.com",
+                "Rua Canopus",
+                123,
+                "86070180",
+                Active.ATIVO,
+                null
+        ));
+        Product product = productRepo.save(new Product(1L, BigDecimal.valueOf(10), Category.FRESCO, seller));
+        seller.setProducts(List.of(product));
+        sellerRepo.save(seller);
         return itemBatchRepo.save(new ItemBatch(
                 1L,
                 product,
@@ -195,7 +209,7 @@ public class OrderPurchaseControllerIT {
                 LocalDate.now(),
                 LocalDateTime.now(),
                 20L,
-                LocalDate.of(2022, 12, 14),
+                LocalDate.now().plusDays(50),
                 BigDecimal.valueOf(100),
                 null,
                 product.getCategory()

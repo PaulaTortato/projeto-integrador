@@ -9,6 +9,7 @@ import com.grupo6.projetointegrador.exception.NotFoundException;
 import com.grupo6.projetointegrador.factory.InboundOrderFactory;
 import com.grupo6.projetointegrador.factory.WarehouseFactory;
 import com.grupo6.projetointegrador.model.entity.*;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.model.enumeration.Category;
 import com.grupo6.projetointegrador.repository.*;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,7 @@ public class InboundOrderServiceImplTest {
     void createInboundOrder_saveInboundOrder_AllProvidedDataIsValid() {
         // Given
         CreateInboundOrderDto createInboundOrderDto = setupCreateInboundOrderDto();
+        Seller seller = setupSellerContainingTwoProducts();
 
         // When
         Warehouse warehouse = WarehouseFactory.build();
@@ -62,6 +64,7 @@ public class InboundOrderServiceImplTest {
         Mockito.when(sectionRepo.findById(1L)).thenReturn(Optional.of(section));
         Mockito.when(warehouseOperatorRepo.findById(1L)).thenReturn(Optional.of(warehouse.getWarehouseOperator()));
         Mockito.when(productRepo.findById(1L)).thenReturn(Optional.of(inboundOrder.getItemBatches().get(0).getProduct()));
+        Mockito.when(productRepo.findSellerByProductId(ArgumentMatchers.any())).thenReturn(Optional.of(seller));
         Mockito.when(inboundOrderRepo.save(ArgumentMatchers.any())).thenReturn(inboundOrder);
         List<ItemBatchDto> itemBatchDtos = inboundOrderService.createInboundOrder(createInboundOrderDto);
 
@@ -318,7 +321,17 @@ public class InboundOrderServiceImplTest {
     }
 
     private Seller setupSellerContainingTwoProducts() {
-        Seller seller = new Seller(1L, null);
+        Seller seller = new Seller(
+                1L,
+                "Fulano",
+                "de Tal",
+                "fulano.dtal@teste.com",
+                "Rua Canopus",
+                123,
+                "86070180",
+                Active.ATIVO,
+                null
+        );
 
         Product arroz = new Product(1L, BigDecimal.valueOf(5), Category.FRESCO, seller);
         Product feijao = new Product(2L, BigDecimal.valueOf(8), Category.FRESCO, seller);

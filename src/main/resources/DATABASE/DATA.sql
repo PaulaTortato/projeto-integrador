@@ -41,16 +41,16 @@ insert into `buyer` (`id`) values(10);
 -- Extraindo dados da tabela `seller`
 --
 
-insert into `seller` (`id`) values(1);
-insert into `seller` (`id`) values(2);
-insert into `seller` (`id`) values(3);
-insert into `seller` (`id`) values(4);
-insert into `seller` (`id`) values(5);
-insert into `seller` (`id`) values(6);
-insert into `seller` (`id`) values(7);
-insert into `seller` (`id`) values(8);
-insert into `seller` (`id`) values(9);
-insert into `seller` (`id`) values(10);
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(1, 'Arthur', 'da Silva', 'arthur.dsilva@email.com', 'Rua Adalberto Carvalho de Araújo', 382, '81070250', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(2, 'Ana', 'Almeida', 'ana.almeida@email.com', 'Rua Tenente Tavares', 39, '78040085', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(3, 'Felipe', 'Antunes', 'felipe.antunes@email.com', 'Travessa Joaquim Viana', 282, '64600439', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(4, 'Fernanda', 'dos Santos', 'fernanda.dsantos@email.com', 'Rua Iraci Almeida da Costa', 439, '58073066', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(5, 'Gabriel', 'Cortez', 'gabriel.cortez@email.com', 'Rua Sílvia', 1045, '01331903', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(6, 'Gisele', 'Oliveira', 'gisele.oliveira@email.com', 'Quadra 303 Norte Alameda 14', 123, '77001230', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(7, 'João Carlos', 'da Silveira', 'jc.dsilveira@email.com', 'Rua Manoel Cristiano Bussinger', 90, '28613730', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(8, 'Juliana', 'Fonseca', 'juliana.fonseca@email.com', 'Rua da Rolinha', 768, '56326170', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(9, 'Marcos', 'Gularte', 'marcos.gularte@email.com', 'Rua Açores', 1904, '79094480', 'ATIVO');
+insert into `seller` (`id`, `first_name`, `last_name`, `email`, `address`, `house_number`, `zip_code`, `active`) values(10, 'Monique', 'Silva Jardim', 'monique.silvajardim@email.com', 'Rua Araguaia', 1283, '64060380', 'ATIVO');
 
 --
 -- Extraindo dados da tabela `warehouse_operator`

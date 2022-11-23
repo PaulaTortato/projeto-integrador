@@ -36,6 +36,7 @@ public class ItemBatch {
     @ManyToOne
     private InboundOrder inboundOrder;
 
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     public ItemBatch(Product product, int productQuantity, LocalDate manufacturingDate, LocalDateTime manufacturingTime, Long volume, LocalDate dueDate, BigDecimal price, InboundOrder inboundOrder, Category category) {

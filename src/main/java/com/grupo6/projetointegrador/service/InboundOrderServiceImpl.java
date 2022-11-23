@@ -1,12 +1,10 @@
 package com.grupo6.projetointegrador.service;
 
-import com.grupo6.projetointegrador.dto.CreateInboundOrderDto;
-import com.grupo6.projetointegrador.dto.CreateItemBatchDto;
-import com.grupo6.projetointegrador.dto.ItemBatchDto;
-import com.grupo6.projetointegrador.dto.UpdateItemBatchDto;
+import com.grupo6.projetointegrador.dto.*;
 import com.grupo6.projetointegrador.exception.BusinessRuleException;
 import com.grupo6.projetointegrador.exception.NotFoundException;
 import com.grupo6.projetointegrador.model.entity.*;
+import com.grupo6.projetointegrador.model.enumeration.Active;
 import com.grupo6.projetointegrador.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +39,13 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         this.sectionRepo = sectionRepo;
     }
 
+    /**
+     * This method receives a DTO with a list of items and ids.
+     * The main goal is to store those items on the provided section.<p>
+     * Also, check the {@link #validateInboundOrderCreation(List, Warehouse, WarehouseOperator, Section, List)} method for validation details.<p>
+     * @param createInboundOrderDto This is the object that will be sent by the frontend.
+     * @return A List<ItemBatchDto> object with the stored items.
+     */
     @Override
     @Transactional
     public List<ItemBatchDto> createInboundOrder(CreateInboundOrderDto createInboundOrderDto) {
@@ -78,6 +83,14 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         return savedInboundOrder.getItemBatches().stream().map(ItemBatchDto::fromItemBatch).collect(Collectors.toList());
     }
 
+    /**
+     * Receives the InboundOrder Id and a list o ItemBatch.
+     * It'll update the provided InboundOrder ItemBatches<p>
+     * Also, check the {@link #validateInboundOrderUpdate(List, InboundOrder, List)} method for validation details.<p>
+     * @param inboundOrderId This is the InboundOrder ID.
+     * @param updateItemBatchDtos This is the object that will be sent by the frontend.
+     * @return A List<ItemBatchDto> object with the stored items.
+     */
     @Override
     @Transactional
     public List<ItemBatchDto> updateItemBatch(Long inboundOrderId, List<UpdateItemBatchDto> updateItemBatchDtos) {
@@ -125,6 +138,12 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         return warehouseOperatorRepo.findById(warehouseOperatorId).orElseThrow(() -> new NotFoundException("Operador não encontrado."));
     }
 
+    /**
+     * Method to find a Section giving It id.
+     *
+     * @param sectionId The id of the section.
+     * @return A section with the given id or {@link NotFoundException} - if none found.
+     */
     private Section findSectionOrThrowNotFound(Long sectionId){
         return sectionRepo.findById(sectionId).orElseThrow(() -> new NotFoundException("Seção não encontrada."));
     }
@@ -138,6 +157,14 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         return productRepo.findById(productId).orElseThrow(() -> new NotFoundException("Produto não encontrado."));
     }
 
+    /**
+     * Validates if an InboundOrder can be created.
+     * @param itemBatchDtos List of items to be created.
+     * @param warehouse Warehouse where It'll be stored.
+     * @param warehouseOperator Who is going to store It.
+     * @param section Section where It'll be stored.
+     * @param products Products to be stored.
+     */
     private void validateInboundOrderCreation(
             List<CreateItemBatchDto> itemBatchDtos,
             Warehouse warehouse,
@@ -152,8 +179,15 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         verifyWarehouseMatchSection(section, warehouse);
         verifyIfProductsCategoryDifferFromSection(products, section);
         verifyIfSectionCanStoreItems(section, volumeToBeStored);
+        verifySeller(products);
     }
 
+    /**
+     * Validates if the InboundOrder ItemBatches can be updated.
+     * @param itemBatchDtos List of InboundOrder items to be updated.
+     * @param inboundOrder InboundOrder to be updated.
+     * @param products Products to be updated.
+     */
     private void validateInboundOrderUpdate(
             List<UpdateItemBatchDto> itemBatchDtos,
             InboundOrder inboundOrder,
@@ -166,18 +200,36 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         verifyIfSectionCanStoreItems(section, volumeToBeStored);
     }
 
+    /**
+     * Verify if the section has enough volume to store the items.
+     * @param section The id of the section.
+     * @param volumeToBeStored The quantity of volume to be used.
+     * @throws BusinessRuleException if volume is not valid.
+     */
     private void verifyIfSectionCanStoreItems(Section section, Long volumeToBeStored) {
         if (section.getVolume().compareTo(volumeToBeStored) < 0) {
             throw new BusinessRuleException("Volume do lote é maior que a capacidade disponível.");
         }
     }
 
+    /**
+     * Verify if the Section and Warehouse are related.
+     * @param section The section.
+     * @param warehouse The warehouse.
+     * @throws BusinessRuleException if does not match.
+     */
     private void verifyWarehouseMatchSection(Section section, Warehouse warehouse) {
         if(!section.getWarehouse().getId().equals(warehouse.getId())){
             throw new BusinessRuleException("Esta seção não faz parte do armazém.");
         }
     }
 
+    /**
+     * Verify if the provided Products categories are equal to the given Section.
+     * @param products Product list.
+     * @param section Section to be compared.
+     * @throws BusinessRuleException if does not match.
+     */
     private void verifyIfProductsCategoryDifferFromSection(List<Product> products, Section section) {
         boolean validStorageType = products.stream()
                 .map(Product::getCategory)
@@ -187,9 +239,25 @@ public class InboundOrderServiceImpl implements InboundOrderService {
         }
     }
 
+    /**
+     * Verify if the Warehouse and Warehouse Operator are related.
+     * @param warehouseOperator The operator.
+     * @param warehouse The warehouse.
+     * @throws BusinessRuleException if does not match.
+     */
     private void verifyWarehouseMatchWithOperator(Warehouse warehouse, WarehouseOperator warehouseOperator) {
         if(!warehouse.getWarehouseOperator().getId().equals(warehouseOperator.getId())){
             throw new BusinessRuleException("Este operador não faz parte do armazém.");
         }
+    }
+
+    private void verifySeller(List<Product> products) {
+        products.forEach((batch) -> {
+            Seller seller = productRepo.findSellerByProductId(batch.getId())
+                    .orElseThrow(() -> new NotFoundException("Vendedor não encontrado."));
+            if(seller.getActive() == Active.INATIVO) {
+                throw new BusinessRuleException("Vendedor inativo.");
+            }
+        });
     }
 }
